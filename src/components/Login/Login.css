@@ -1,0 +1,21 @@
+/* .Card{
+    width:400px;
+   
+    margin-left: 30%;
+    height: auto;
+} */
+.Label{
+    display: inline-block;
+    width: 100%;
+    text-align: left;
+    font-weight: bold;
+}
+/* .Form{
+    margin: 10px;
+}
+.Logo{ 
+    margin-top: 10%;
+    position: relative;
+    margin-bottom: 10px;
+   
+} */
