@@ -19,7 +19,7 @@ const CustomStepper = (props) => {
         }
     }
     return (
-        <div className='d-flex flex-rows my-5'>
+        <div className='d-flex flex-rows my-5'  >
             <div className={step===1?style.active.one:step===2?style.complete.one:style.complete.one}>step 1<br />Add Advertiser</div>
             <div className={step===1?style.incomplete.two:step===2?style.active.two:style.complete.two}>step 2<br />Add Order</div>
             <div className={step===1?style.incomplete.three:step===2?style.incomplete.three:style.active.three}>step 3<br />Add Assets</div>

@@ -3,30 +3,39 @@ import './App.css';
 import Changepasword from './components/ChangePassword/ChangePassword';
 import Login from './components/Login/Login';
 import Order from './components/DashBoard/Order/Order';
-// import Page3 from './components/Order/Page3';
 import DashBoard from './components/DashBoard/DashBoard';
-import {Route,Switch} from 'react-router-dom'
-import VideosInProduction from './components/DashBoard/Campaigns/VideosInProduction';
-import NavigationBar from './components/DashBoard/NavigationBar/NavigationBar';
+import {Route,Switch,Redirect} from 'react-router-dom'
+import VideosInProduction from './components/DashBoard/Campaigns/VideosInProduction/VideosInProduction';
+import AuthRoute from './components/AuthGuard/AuthGuard';
 function App() {
+
+   let  route=(<div>
+     
+      <Switch>
+        <Route path='/login' exact component={Login}  />
+      <AuthRoute path='/dashBoard' exact component={DashBoard} />
+       <AuthRoute path='/order' exact component={Order} />
+       <AuthRoute path='/videosInProduction' exact component={VideosInProduction}  />
+       <AuthRoute path='/changePassword' exact component={Changepasword} />
+       <Redirect to='/login'/>
+       </Switch>
+      </div>)
+    
+   
  
+
   return (
     <div className="App">
-     {window.location.pathname!=='/'?<NavigationBar/>:null}
-     <Switch>
-       <Route path='/order' component={Order} />
-       <Route path='/dashBoard' component={DashBoard} />
+        {route}
+      {/* {localStorage.getItem('token') ? route:<Login />} */}
+     {/* <Switch>
+       <Route path='/dashBoard/order' component={Order} />
        <Route path='/videosInProduction' component={VideosInProduction}  />
        <Route path='/changePassword' component={Changepasword} />
-       <Route  path='/' exact component={Login} />
-   
-      </Switch>
-     
-      {/* <Order/> */}
-  {/* <Page2/> */}
-  {/* <Page3/> */}
-      {/* <Changepasword/> */}
-     {/* <Login/> */}
+       <Route path='/dashBoard' component={DashBoard}  />
+       <Route  path='/' exact component={Login}  />
+       <Redirect to='/'/>
+      </Switch>  */}
     </div>
   );
 }

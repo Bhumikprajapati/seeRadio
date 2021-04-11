@@ -1,12 +1,15 @@
-import { useState } from "react/cjs/react.development";
+import { useEffect, useState } from "react/cjs/react.development";
 import AddAdvertiser from "./AddAdvertiser";
 import AddNewOrder from "./AddNewOrder";
 import AddTest from "./AddTest";
 const Order=()=>{
+ useEffect(()=>{
+  document.body.style = 'background: #F2F5F9;'
+ },[])
     const [PageOne, setPageOne] = useState({
         companyName: '',
         website: '',
-        industryCategory: 'Arts & Entertainment',
+        industryCategory: 'Sports',
         firstName: '',
         lastName: '',
         email: '',
@@ -18,27 +21,27 @@ const Order=()=>{
         address: '',
         addressLine2: '',
         city: '',
-        country: 'India',
-        state: 'India',
+        country:'CA',
+        state: 'AB',
         postal: '',
         address2: '',
         addressLine22: '',
         city2: '',
-        country2: 'India',
-        state2: 'India',
+        country2: 'CA',
+        state2: 'AB',
         postal2: ''
       })
       const [PageTwo,setPageTwo]=useState({
-        advertiser:'Test bacancy',
+        advertiser:'ADCOMSAM',
         title:'',
         landingUrl:'',
         price:'',
         description:'',
-        targetMarket:'Calgary',
+        targetMarket:'',
         budget:''
       })
-      const [script, setScript] = useState('')
-  const [audio, setAudio] = useState('')
+      const [script, setScript] = useState([])
+  const [audio, setAudio] = useState([])
   const [multifiles, setmultifiles] = useState([])
     const [step,setStep]=useState(1)
    const nextStep=()=>{
@@ -60,6 +63,7 @@ const resetStep=(e)=>{
              setPageOne={setPageOne}
              step={step}
              nextStep={nextStep}
+             resetStep={resetStep}
              />
              ) 
            case 2:

@@ -26,40 +26,52 @@ const NavigationBar = (props) => {
 
     const [isOpen, setIsOpen] = useState(false);
     const toggle = () => setIsOpen(!isOpen);
-
+const logoutHandler=()=>{
+  localStorage.removeItem('token')
+  localStorage.removeItem('createdByPerson')
+  localStorage.removeItem('role')
+  localStorage.removeItem('OrderData')
+  localStorage.removeItem('clientData')
+  localStorage.removeItem('loginId')
+  props.history.push('/login')
+}
+const activeStyle={backgroundColor:'#086890'}
     return (
         <>
-         <Navbar style={{maxHeight:'80px',margin:'0px 15px',padding:'0px',display:'flex',alignItems:'center',justifyContent:'center',height:'100px'}} className="text-white" light expand="md">
-
+         <Navbar style={{maxHeight:'80px',margin:'0px 15px',padding:'0px',display:'flex',alignItems:'center',
+         justifyContent:'center',height:'100px'}} className="text-white" light expand="md">
         
           <Nav className="mr-auto" navbar>
-            <NavbarBrand style={{marginTop:'-10px'}}><RouteNavLink to="dashboard"><img src={logo} alt="logo"/></RouteNavLink></NavbarBrand>
+            <NavbarBrand style={{marginTop:'-10px'}}>
+              <RouteNavLink to="dashboard"><img src={logo} alt="logo"/></RouteNavLink>
+              </NavbarBrand>
             </Nav>
              <UncontrolledDropdown nav >
               <DropdownToggle nav caret className="text-white  p-0 mr-4">
                 <div style={{display:'flex',flexDirection:'row',alignItems:'center'}}>
                   <IoIosNotifications className="mr-4" color="black" size="25"/>
-                  <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}><FaUserCircle color="blue" size="25"/><FiChevronDown color="black"/></div>
+                  <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
+                    <FaUserCircle color="blue" size="25"/><FiChevronDown color="black"/></div>
                   <div style={{display:'flex',flexDirection:'column',alignItems:'center'}} className="ml-2">
                     <p style={{fontSize:'14px'}} className="mb-0 text-primary">See radio administrator</p>
-                    <p style={{fontSize:'14px'}} className="mb-0 text-dark">sr.sr@sr.com</p>
+                    <p style={{fontSize:'14px'}} className="mb-0 text-dark">sr@sr.com</p>
                   </div>
                 </div>
               </DropdownToggle>
               <DropdownMenu right style={{marginTop:'-30px'}}>
-                <NavLink to="" style={{margin:'-5px'}}>
+                <NavLink href="" style={{margin:'-5px'}}>
                     <DropdownItem >
                   Profile
                 </DropdownItem></NavLink>
-                <NavLink to="/changepassword" style={{margin:'-5px'}}>
+                <NavLink href="/changepassword" style={{margin:'-5px'}}>
                     <DropdownItem >
                   Change Password
                 </DropdownItem></NavLink>
-                <NavLink to="" style={{margin:'-5px'}}>
+                <NavLink href="" style={{margin:'-5px'}}>
                     <DropdownItem >
                   Company Details
                 </DropdownItem></NavLink>
-                <NavLink to="/" style={{margin:'-5px'}}>
+                <NavLink href='/' style={{margin:'-5px'}} onClick={logoutHandler} >
                     <DropdownItem  style={{color:'red'}} >
                   Sign Out
                 </DropdownItem></NavLink>
@@ -67,51 +79,51 @@ const NavigationBar = (props) => {
                 </UncontrolledDropdown>
           </Navbar>
 
-        <Navbar style={{background:'#11A1DD',padding:'0px'}} className="text-white" light expand="md">
+        <Navbar style={{background:'#11A1DD',padding:'0px',marginBottom:'-35px'}} className="text-white" light expand="md">
         <NavbarToggler onClick={toggle}/>
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar>
-            <RouteNavLink activeStyle={{backgroundColor:'#086890'}} to="dashboard">
+            <RouteNavLink activeStyle={activeStyle} to="dashBoard">
               <NavItem>
               <NavLink className="text-white"><AiFillDashboard className="mb-1"/> Dashboard</NavLink>
             </NavItem>
             </RouteNavLink>
             <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret className="text-white">
+              <DropdownToggle nav caret className="text-white" >
                 <FaFire className="mb-1"/> Campaigns
               </DropdownToggle>
               <DropdownMenu >
-                <RouteNavLink activeStyle={{backgroundColor:'#086890'}} to="/videosInProduction">
+                <RouteNavLink activeStyle={activeStyle} to="/videosInProduction">
                     <DropdownItem>
                   Videos in Production
                 </DropdownItem></RouteNavLink>
-                <RouteNavLink activeStyle={{backgroundColor:'#086890'}} to="">
+                <RouteNavLink activeStyle={activeStyle} to="capmpaignInMarket">
                     <DropdownItem>
                   Campaign in market
                 </DropdownItem></RouteNavLink>
                 <DropdownItem divider />
-                <RouteNavLink activeStyle={{backgroundColor:'#086890'}} to="/campaigndetails">
+                <RouteNavLink activeStyle={activeStyle} to="/completedCampaign">
                     <DropdownItem>
                   Completed Campaigns
                 </DropdownItem></RouteNavLink>
               </DropdownMenu>
             </UncontrolledDropdown>
-            <RouteNavLink activeStyle={{backgroundColor:'#086890'}} to="/advertisers">
+            <RouteNavLink activeStyle={activeStyle} to="/advertisers">
               <NavItem>
               <NavLink className="text-white"><RiAdvertisementFill className="mb-1"/> Advertisers</NavLink>
             </NavItem></RouteNavLink>
           </Nav>
           <Nav>
-           <RouteNavLink activeStyle={{backgroundColor:'#086890'}} exact to="/order">
+           <RouteNavLink activeStyle={activeStyle} exact to="/order">
              <NavItem className="navbar-right">
-              <NavLink className="text-white">+Orders</NavLink>
+              <NavLink className="text-white"><strong>+</strong> Orders</NavLink>
             </NavItem>
             </RouteNavLink>
           </Nav>
           
         </Collapse>
       </Navbar>
-      </>
+      </> 
     )
 }
 

@@ -1,11 +1,14 @@
 
-const DashBoard=()=>{
+
+const DashBoard=(props)=>{
 
 
     return(
         <div>
-      
-        <h4 style={{textAlign:'left',marginLeft:'20px'}}>To Do List</h4> 
+    
+        <h1 style={{marginTop:'30px'}}>
+            To Do List</h1> 
+           
         <div className="bg-white shadow p-2" style={{ borderRadius: '10px' }}>
             There are no tasks remaining
             </div>
