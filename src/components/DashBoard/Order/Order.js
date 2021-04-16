@@ -40,8 +40,8 @@ const Order=()=>{
         targetMarket:'',
         budget:''
       })
-      const [script, setScript] = useState([])
-  const [audio, setAudio] = useState([])
+      const [script, setScript] = useState('')
+  const [audio, setAudio] = useState('')
   const [multifiles, setmultifiles] = useState([])
     const [step,setStep]=useState(1)
    const nextStep=()=>{

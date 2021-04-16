@@ -4,24 +4,33 @@ export const COLUMNS=[
         accessor:'id'
     },
     {
-        Header:'First Name',
-        accessor:'first_name'
+        Header:'Title/Details',
+        accessor:'title'
     },
     {
-        Header:'Last Name',
-        accessor:'last_name'
+        Header:'Advertiser',
+        accessor:'clientCompany.companyName'
     },
     {
-        Header:'Date Of Birth',
-        accessor:'date_of_birth'
+        Header:'Action Required By',
+        accessor:(row)=>{
+            return(
+                row.statusWithPerson.firstName +' '+row.statusWithPerson.lastName
+            )
+        }
     },
     {
-        Header:'Country',
-        accessor:'country'
+        Header:'Next Action Due By ',
+       
+        Cell:()=>('12-Apr-2021')
     },
     {
-        Header:'Phone',
-        accessor:'phone'
+        Header:'Start',
+        Cell:()=>('Not Selected')
+    },
+    {
+        Header:'Finish',
+        Cell:()=>('Not Selected')
     }
 
 ]

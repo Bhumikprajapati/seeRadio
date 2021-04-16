@@ -6,13 +6,11 @@ import {FaEyeSlash,FaEye} from 'react-icons/fa';
 import RegexValidation from '../Validations/RegexValidation';
 import { useEffect } from 'react/cjs/react.development';
 import {useHistory} from 'react-router-dom';
-import axios from 'axios';
-const Login=(props)=>{
-     const url=process.env.REACT_APP_URL;
+import { loginwith } from '../../ApiCalls/Api';
+const Login=()=>{
      let history=useHistory();
      const [loginInfo,setLoginInfo]=useState({email:'',password:''})
      const [isFormValid,setisFormValid]=useState(false);
-    //  const [login,setlogin]=useState(false)
      const [toggle,setToggle]=useState(false);
      const [validation,setValidation]=useState({
       email: {
@@ -28,14 +26,15 @@ const Login=(props)=>{
      const submitted=(e)=>{  
        e.preventDefault();
       
-         axios.post(`${url}/pub/login`,loginInfo)
+         loginwith(loginInfo)
          .then(res=>
           {
-            console.log(res.data.data.personData);
-            localStorage.setItem('token',res.data.data.token)
-            localStorage.setItem('role',res.data.data.personData.roleCode)
-            localStorage.setItem('createdByPerson',res.data.data.personData.createdByPerson)
-            localStorage.setItem('loginId',res.data.data.personData.id)
+            console.log(res.personData);
+            localStorage.setItem('token',res.token)
+            localStorage.setItem('role',res.personData.roleCode)
+            localStorage.setItem('loginMail',res.personData.email)
+            localStorage.setItem('createdByPerson',res.personData.createdByPerson)
+            localStorage.setItem('loginId',res.personData.id)
           
             history.push('/dashBoard')
          
@@ -43,7 +42,7 @@ const Login=(props)=>{
          .catch(err=>
           {
             console.log(err);
-      // alert(JSON.parse(err.request.response).errorMessage)
+      alert(JSON.parse(err.request.response).errorMessage)
           })
      }  
      useEffect(()=>{

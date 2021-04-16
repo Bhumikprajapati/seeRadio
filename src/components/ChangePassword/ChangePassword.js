@@ -3,7 +3,7 @@ import {Col,Form,FormGroup,Input,Label,Button,FormText, FormFeedback} from 'reac
 import {FaEyeSlash,FaEye} from 'react-icons/fa';
 import { useEffect, useState } from 'react/cjs/react.development';
 import RegexValidation from '../Validations/RegexValidation';
-import axios from 'axios';
+import { changePassWith } from '../../ApiCalls/Api';
 const Changepasword=(props)=>{
   const [pass,setPass]=useState({
     currentPass:'',
@@ -56,18 +56,11 @@ setisFormValid(valid)
       alert('Please Match Password & confirm password')
     }
     else{
-    
-      axios.post('http://localhost:3000/api/person/changePassword', 
-      {
-        "oldPassword":pass['currentPass'],
-        "newPassword":pass['newPass']
-      }
-      ,{
-        headers:{
-        'x-token':localStorage.getItem('token'),
-        'Content-Type':'application/json'
+    const payload= {
+      "oldPassword":pass['currentPass'],
+      "newPassword":pass['newPass']
     }
-    })
+      changePassWith(payload)
       .then(res=>{console.log(res)
         alert('password changed successfully')
         props.history.push('/dashBoard')

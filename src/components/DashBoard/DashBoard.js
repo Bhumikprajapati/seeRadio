@@ -6,7 +6,7 @@ const DashBoard=(props)=>{
     return(
         <div>
     
-        <h1 style={{marginTop:'30px'}}>
+        <h1 >
             To Do List</h1> 
            
         <div className="bg-white shadow p-2" style={{ borderRadius: '10px' }}>

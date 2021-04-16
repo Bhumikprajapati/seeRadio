@@ -1,16 +1,28 @@
 import React,{useMemo} from 'react';
-// import { useState } from "react/cjs/react.development";
+import { useState } from "react/cjs/react.development";
 import {useTable,usePagination} from 'react-table';
-import MOCK_DATA from './MOCK_DATA.json';
 import {COLUMNS} from './Columns';
 import {Button} from 'reactstrap';
 import {FaFilter} from 'react-icons/fa';
 import './VideosInProduction.css';
+import { useEffect } from 'react/cjs/react.development';
+import axios from 'axios';
+import {useHistory} from 'react-router-dom';
  const  VideosInProduction=()=> {  
-// const [posts,setPosts]=useState([])
+const [data,setAllData]=useState([])
+const url=process.env.REACT_APP_URL;
 const columns = useMemo(() => COLUMNS, [])
-const data = useMemo(() => MOCK_DATA, [])
-
+ useEffect(()=>{
+  const headers={
+    'x-token':localStorage.getItem('token')
+}
+axios.post(`${url}/api/campaign/getAllcampaigns`,{},{headers:headers})
+.then(res=>{
+  console.log(res.data.data.rows)
+  setAllData(res.data.data.rows)
+})
+.catch(err=>console.log(err))
+ },[url])
 const {
   getTableProps,
   getTableBodyProps,
@@ -27,14 +39,21 @@ const {
 } = useTable({
   columns,
   data
+  
 },usePagination)
 const {pageIndex}=state
 const filterSearch=()=>{
   alert('Filter Will be added soon.....')
 }
+const history=useHistory()
+// const getThePost=(cell)=>{
+// console.log(cell.value)
+// // localStorage.setItem('campaignId',e.target)
+// history.replace(`/campaignDetail/${cell.value}`)
+// }
 return (
   <>
-  <div style={{ textAlign: 'center',marginTop:'35px',display:'flex'}}>
+  <div style={{ textAlign: 'center',display:'flex'}}>
   <Button style={{background:'black',marginLeft:'50px',marginTop:'20px'}} onClick={filterSearch} >
     <FaFilter  style={{marginRight:'5px'}}/>
     Search Filters</Button>
@@ -45,7 +64,7 @@ return (
     <table {...getTableProps()}>
       <thead>
         {headerGroups.map(headerGroup => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
+          <tr {...headerGroup.getHeaderGroupProps()}   style={{ boxShadow: '0px 3px 5px '}}>
             {headerGroup.headers.map(column => (
               <th {...column.getHeaderProps()}>{column.render('Header')}</th>
             ))}
@@ -56,9 +75,10 @@ return (
         {page.map(row => {
           prepareRow(row)
           return (
-            <tr {...row.getRowProps()} >
+            <tr {...row.getRowProps()}   >
               {row.cells.map(cell => {
-                return <td {...cell.getCellProps()} >{cell.render('Cell')}</td>
+                console.log(cell)
+                return <td {...cell.getCellProps()}  onClick={()=>{history.push(`/campaignDetail/${cell.value}`)}} >{cell.render('Cell')}</td>
               })}
             </tr>
           )

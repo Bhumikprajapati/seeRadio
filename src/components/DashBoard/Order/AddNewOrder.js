@@ -3,10 +3,9 @@ import {FaForward,FaBackward} from 'react-icons/fa';
 import { useState,useEffect, } from 'react/cjs/react.development';
 import RegexValidation from '../../Validations/RegexValidation';
 import CustomStepper from './Stepper/CustomStepper';
-import axios from 'axios';
+import {getAdvertiser,getTargetMarket,addCampaign} from '../../../ApiCalls/Api';
 
 const AddNewOrder=(props)=>{
-    const url=process.env.REACT_APP_URL; 
     const {PageTwo,setPageTwo,nextStep,prevStep,step,resetStep}=props
      const [isFomValid, setisFormValid] = useState(false)
      const [advertiserOption,setAdvertiserOption]=useState([])
@@ -51,13 +50,10 @@ const AddNewOrder=(props)=>{
     },[validation])
    
     useEffect(()=>{
-      const headers={
-        'x-token':localStorage.getItem('token')
-    }
-      axios.get(`${url}/api/company/clients`,{headers})
+      getAdvertiser()
       .then(res=>{
         // console.log(res)
-        let data=res.data.data
+        let data=res
         setAdvertiserOption(
             data.map((adv)=>{
                 return {label:adv.companyName,value:adv.id}
@@ -65,10 +61,9 @@ const AddNewOrder=(props)=>{
       })
       .catch(err=>console.error(err))
 
-      axios.get(`${url}/api/wholesalepricing/getMarkets`,{headers})
+      getTargetMarket()
       .then(res=>{
-        let markets=res.data.data
-        // console.log(res)
+        let markets=res
         setTargetMarketOption(
           markets.map((market)=>{
             return {label:market.name,id:market.id,value:market.name}
@@ -76,7 +71,7 @@ const AddNewOrder=(props)=>{
         )
       })
       .catch(err=>console.error(err))
-    },[url])
+    },[])
     const handleChange = (e) => {
       const isValid = RegexValidation(e.target.name, e.target.value)
       setValidation({...validation,[e.target.name]:{touched:true,valid:isValid}})
@@ -109,18 +104,18 @@ const AddNewOrder=(props)=>{
         "statusByPersonID": statusByPersonID,
         "statusWithPersonID": statusWithPersonID
     }
-      // axios.post(`${url}/api/campaign`,campaign,{headers})
-      // .then(res=>{
-      //   console.log(res)
-      //   localStorage.setItem('OrderData',JSON.stringify(res.data.data))
-      //   nextStep()})
-      // .catch(err=>console.log(err))
+    //  addCampaign(campaign)
+    //   .then(res=>{
+    //     console.log(res)
+    //     localStorage.setItem('OrderData',JSON.stringify(res))
+    //     nextStep()})
+    //   .catch(err=>console.log(err))
       nextStep()
     }
     return(
         <div>
         <div className="d-flex justify-content-center align-items-center w-100 h-100 flex-column mx-0 px-3" style={{background:'#F2F5F9'}}>
-      <div className="w-100 mt-100 mx-auto" style={{maxWidth:'1200px',maxHeight:'800px',marginTop:'5vh'}}>
+      <div className="w-100 mt-100 mx-auto" style={{maxWidth:'1200px',maxHeight:'800px'}}>
         <CustomStepper activeStep={step} />
       <h4 style={{textAlign:'left',color:'blue'}}>Add New Orders</h4> 
           <div className="bg-white shadow p-4" style={{borderRadius:'20px'}}>

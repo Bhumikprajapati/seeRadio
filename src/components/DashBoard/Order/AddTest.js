@@ -1,11 +1,11 @@
-import Dropzone from "react-dropzone"
+import Dropzone from "react-dropzone";
 import { Form, Row, Alert, Col, Button, Card,Input} from "reactstrap";
-import { FaBackward, FaFileAlt } from 'react-icons/fa';
+import { FaBackward, FaFileAlt,FaDownload } from 'react-icons/fa';
 import { RiFileCopyLine } from 'react-icons/ri';
 import { BsFillMicFill } from 'react-icons/bs'
 import CustomStepper from './Stepper/CustomStepper';
 import {  useState } from "react/cjs/react.development";
-import axios from "axios";
+import { addFile } from "../../../ApiCalls/Api";
 const todayDate=()=>{
   var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -16,19 +16,21 @@ const todayDate=()=>{
   return date
 } 
 const AddTest = (props) => {
-  const url=process.env.REACT_APP_URL;
   const {script,setScript,audio,setAudio,multifiles} =props;
   const [scriptFlag,setScriptFlag]=useState(false)
   const [audioFlag,setAudioFlag]=useState(false)
   const [multiFileFlag,setMultiFileFlag]=useState(false)
+  // const [url,setUrl]=useState({
+  //   scriptUrl:'',
+  //   audioUrl:'',
+  //   multiUrl:[]
+  // })
   const afterUpload=(type,file)=>{
     const OrderData=JSON.parse(localStorage.getItem('OrderData'))
     const campaignID=OrderData.history.campaignID
     const loginID=localStorage.getItem('loginId')
     const clientData=JSON.parse(localStorage.getItem('clientData'))
     const clientID=clientData.salesOrgCompany.clientPersonID
-    // const token=
-    // console.log('campaign  '+campaignID+' loginID  '+loginID+' type '+type+' file '+JSON.stringify(file))
     let formData=new FormData();
     if(type==='OTHER')
     {
@@ -45,39 +47,54 @@ const AddTest = (props) => {
     formData.append("type",type);
     formData.append("uploadedBy",loginID);
     formData.append("clientID",clientID)
-    console.log('pass data'+JSON.stringify(formData))
-    const headers={
-      'x-token':localStorage.getItem('token')
-    }
-      // axios.post(`${url}/api/campaign/upload`,formData,{headers:headers})
-      // .then(res=>{
-      //   console.log(res)
-      //   console.log(res.data.data.data[0].assetUrl)
-      // })
-      // .catch(err=>console.error(err))
+     addFile(formData)
+      .then(res=>{
+        console.log(res)
+        if(res.data[0].type==='SCRIPT')
+        {
+          const script=res.data[0]
+          setScript(script)
+        }
+        if(res.data[0].type==='AUDIO')
+        {
+          const audio=res.data[0]
+          setAudio(audio)
+        }
+        if(res.data[0].type==='OTHER')
+        {
+          const data=res.data
+          // const multiUrl=[]
+          for(let index in data)
+          {
+            multifiles.push(data[index])
+          }
+        }
+
+      })
+      .catch(err=>console.error(err))
   }
-  const onDropScipt = (file) => {
-    const fileName = file[0].name
-    console.log(file[0])    
-   let date=todayDate()
-    setScript([fileName,date])
+  console.log(multifiles)
+  const onDropScript = (file) => {
+    // const fileName = file[0].name
+    // console.log(file[0])    
+  //  let date=todayDate()
+    // setScript([fileName,date])
     afterUpload('SCRIPT',file[0])
     setScriptFlag(true)
   }
   const onDropAudio = (file) => {
-    const fileName = file[0].name
-    let date=todayDate()
-    setAudio([fileName,date])
+    // const fileName = file[0].name
+    // let date=todayDate()
+    // setAudio([fileName,date])
     afterUpload('AUDIO',file[0])
     setAudioFlag(true)
   }
   const onDropMultiFile = (file) => {
     const files = file
-    for(let i=0;i<files.length; i++) {
-      multifiles.push(files[i].name)
-      }
-      
-      console.log(files)
+    // for(let i=0;i<files.length; i++) {
+    //   multifiles.push(files[i].name)
+    //   } 
+    //   console.log(files)
       afterUpload('OTHER',files)
       setMultiFileFlag(true)
   }
@@ -93,19 +110,18 @@ const AddTest = (props) => {
 
  const uploadScriptHandler=(e)=>{
    let file=e.target.files
-   const fileName=file[0].name
-  let date=todayDate()
-   setScript([fileName,date])
+  //  const fileName=file[0].name
+  // let date=todayDate()
+  //  setScript([fileName,date])
    afterUpload('SCRIPT',file[0])
   setScriptFlag(true)
-
  }
  const uploadAudioHandler=(e)=>{
 let file=e.target.files
-const fileName=file[0].name
+// const fileName=file[0].name
 // console.log('Files button'+)
-let date=todayDate()
-setAudio([fileName,date])
+// let date=todayDate()
+// setAudio([fileName,date])
 afterUpload('AUDIO',file[0])
 setAudioFlag(true)
  }
@@ -114,18 +130,22 @@ let files=e.target.files
 
 // const date=todayDate()
 // console.log(files)
-for(let i=0;i<files.length; i++) {
-multifiles.push(files[i].name)
-}
-console.log(multifiles)
+// for(let i=0;i<files.length; i++) {
+// multifiles.push(files[i].name)
+// }
+// console.log(multifiles)
 afterUpload('OTHER',files)
 setMultiFileFlag(true)
  }
  let scriptFileData=(
+   <div>
+ {/* <Alert color="info" style={{ textAlign: 'left' }} >
+ Script File
+ </Alert> */}
    <Row>
   <Col md={6}>
   <Card style={{ height: '100px', marginBottom: '20px' }}>
-    <Dropzone onDrop={onDropScipt}
+    <Dropzone onDrop={onDropScript}
        accept='.docx,.pdf'
       maxFiles={1}
       multiple={false}
@@ -156,6 +176,8 @@ setMultiFileFlag(true)
   </Row>
 </Col>
 </Row>
+</div>
+
  )
  let audioFileData=(
   <Row>
@@ -205,11 +227,11 @@ setMultiFileFlag(true)
               </thead>
               <tbody>
               {multifiles.map((index)=>{
-               return( <tr key={index}>
-                  <td>{index }</td>
+               return( <tr key={index.id}>
+                  <td>{index.assetOrignalName }</td>
                   <td>{<strong>Bmp</strong>}</td>
                   <td> {todayDate()} </td>
-                  <td>download</td>
+                  <td><FaDownload style={{color:'blue',margin:'2px'}}/><Button  color='primary' style={{fontSize:'12px'}} onClick={()=>window.open(index.assetUrl,'_blank')} >Download</Button></td>
                 </tr>)
               })}
               </tbody>
@@ -218,38 +240,44 @@ setMultiFileFlag(true)
   return (
     <div>
     <div className="d-flex justify-content-center align-items-center w-100 h-100 flex-column mx-0 px-3" style={{ background: '#F2F5F9' }}>
-      <div className="w-100 mt-100 mx-auto" style={{ maxWidth: '1200px', maxHeight: '800px', marginTop: '5vh' }}>
+      <div className="w-100 mt-100 mx-auto" style={{ maxWidth: '1200px', maxHeight: '800px'}}>
       <CustomStepper activeStep={props.step} />
         <h4 style={{ textAlign: 'left' }}>Test</h4>
         <div className="bg-white shadow p-4" style={{ borderRadius: '20px' }}>
           <Form>
-            
-            <Alert color="info" style={{ textAlign: 'left' }} >
-              Script File
+          <Alert color="info" style={{ textAlign: 'left' ,display:'flex'}} >
+              Script File { scriptFlag?<div><FaDownload style={{margin:'10px',color:'blue'}}/>
+              <Button color='primary' style={{fontSize:'12px'}} onClick={()=>window.open(script.assetUrl,'_blank')} >Download</Button></div>:null}
                      </Alert>
               { scriptFlag?
               <div style={{background:'#b5faac'}}>
+               
               <Row>    
                <Col md={2}>
              <FaFileAlt style={{ color: '#007acc', fontSize: '50px', margin: '10px' }} />
              </Col> 
              <Col md={2}>
               <h5>File Name :</h5><br/>
-            {script[0]}
+            {script.assetOrignalName}
              </Col>
              <Col md={4}>
              <h5>File Upload by :</h5><br/>
-              bmp
+            {/* { personName[script.uploadedBy]} */}
+            bmp
              </Col>
              <Col md={4}>
              <h5>Upload Date:</h5><br/>
-             {script[1]}
+             {todayDate()}
              </Col>
            </Row>
                 </div> 
                 :scriptFileData}
-            <Alert color="info" style={{ textAlign: 'left' }} >
-              Voice File
+            <Alert color="info" style={{ textAlign: 'left' ,display:'flex'}} >
+              Voice File {audioFlag?
+              <div>
+              <FaDownload style={{margin:'8px',color:'blue'}}/>
+              <Button color='primary'style={{fontSize:'12px'}} onClick={()=>window.open(audio.assetUrl,'_blank')} >Download</Button>
+              </div>:null}
                      </Alert>
             {audioFlag?
              <div style={{background:'#b5faac'}}>
@@ -259,7 +287,7 @@ setMultiFileFlag(true)
             </Col> 
             <Col md={2}>
              <h5>File Name :</h5><br/>
-           {audio[0]}
+           {audio.assetOrignalName}
             </Col>
             <Col md={4}>
             <h5>File Upload by :</h5><br/>
@@ -267,7 +295,7 @@ setMultiFileFlag(true)
             </Col>
             <Col md={4}>
             <h5>Upload Date:</h5><br/>
-            {audio[1]}
+            {todayDate()}
             </Col>
           </Row>
                </div> 

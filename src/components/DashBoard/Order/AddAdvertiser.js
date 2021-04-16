@@ -3,9 +3,8 @@ import { FaForward } from 'react-icons/fa';
 import { useEffect, useState } from 'react/cjs/react.development';
 import RegexValidation from '../../Validations/RegexValidation';
 import CustomStepper from './Stepper/CustomStepper';
-import axios from 'axios';
+import {addAdvertiserpost, getAllCountries,getIndustries,getState}  from '../../../ApiCalls/Api';
 const AddAdvertiser = (props) => {
-  const url=process.env.REACT_APP_URL;
  const {PageOne,setPageOne,step,nextStep,resetStep}=props
   const [isFomValid, setisFormValid] = useState(false)
   const [primaryToggle,setPrimaryToggle]=useState(false)
@@ -112,33 +111,33 @@ const AddAdvertiser = (props) => {
   const [secondarystateOption,setsecondarystateOption]=useState([])
   const [industryOption,setIndustryOption]=useState([])
 useEffect(()=>{
-  axios.get(`${url}/pub/country`)
-  .then(res=> {
-   let countries=res.data.data
+  getAllCountries()
+   .then(res=> {
+   let countries=res
    setCountryOption(countries.map(c=>{return{value:c.code,label:c.name}}))
    setsecondaryCountryOption(countries.map(c=>{return{value:c.code,label:c.name}}))
   })
   .catch(err=>console.log('Error '+err))
-  axios.get(`${url}/pub/states/${PageOne['country']}`)
+  getState(PageOne['country'])
   .then(res=>{ 
-    let states=res.data.data
+    let states=res
     setstateOption(states.map(s=>{return{label:s.name,value:s.code,id:s.id}}))
    })
   .catch(err=>console.log(err)) 
-  axios.get(`${url}/pub/states/${PageOne['country2']}`)
+  getState(PageOne['country2'])
   .then(res=>{ 
-    let states=res.data.data
+    let states=res
     setsecondarystateOption(states.map(s=>{return{label:s.name,value:s.code,id:s.id}}))
    })
   .catch(err=>console.log(err)) 
-  let token= localStorage.getItem('token') 
-  axios.get(`${url}/api/wholesalepricing/getIndustries`,{headers:{'x-token':token}})
+  // let token= localStorage.getItem('token') 
+  getIndustries()
   .then(res=>
-    {let industry=res.data.data
+    {let industry=res
     setIndustryOption(industry.map(i=>{return{id:i.id,name:i.name}}))}
     )
   .catch(err=>console.error('error'+err))
-},[PageOne,url])
+},[PageOne])
 
 const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/ 
 const handleInput = (value) => {
@@ -215,16 +214,10 @@ const handleInput = (value) => {
       "roleCode": roleCode,
       "createdByPerson": createdByPerson
   }
-//   axios.post(`${url}/api/company/client`,client
-//   ,{
-//     headers:{
-//     'x-token':localStorage.getItem('token'),
-//     'Content-Type':'application/json'
-// }
-// })
+//  addAdvertiserpost(client)
 //   .then(res=>
-//    { console.log('step 1 done successfully'+res)
-//     localStorage.setItem('clientData',JSON.stringify(res.data.data))
+//    { 
+//     localStorage.setItem('clientData',JSON.stringify(res))
 //     nextStep()} )
 //   .catch(err=>console.error('Error '+err)) 
   nextStep()
@@ -232,7 +225,7 @@ const handleInput = (value) => {
   return (
     <div>
     <div className="d-flex justify-content-center align-items-center w-100 h-100 flex-column mx-0 px-3" style={{ background: '#F2F5F9' }}>
-      <div className="w-100 mt-100 mx-auto" style={{ maxWidth: '1200px', maxHeight: '800px', marginTop: '5vh' }}>
+      <div className="w-100 mt-100 mx-auto" style={{ maxWidth: '1200px', maxHeight: '800px'}}>
         <CustomStepper  activeStep={step} />
         <h4 style={{ textAlign: 'left', color: 'blue' }}>Add New Advertiser</h4>
         <div className="bg-white shadow p-4" style={{ borderRadius: '20px' }}>

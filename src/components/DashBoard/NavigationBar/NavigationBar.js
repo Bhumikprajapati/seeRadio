@@ -36,6 +36,8 @@ const logoutHandler=()=>{
   props.history.push('/login')
 }
 const activeStyle={backgroundColor:'#086890'}
+const role=localStorage.getItem('role')
+const loginMail=localStorage.getItem('loginMail')
     return (
         <>
          <Navbar style={{maxHeight:'80px',margin:'0px 15px',padding:'0px',display:'flex',alignItems:'center',
@@ -49,12 +51,13 @@ const activeStyle={backgroundColor:'#086890'}
              <UncontrolledDropdown nav >
               <DropdownToggle nav caret className="text-white  p-0 mr-4">
                 <div style={{display:'flex',flexDirection:'row',alignItems:'center'}}>
-                  <IoIosNotifications className="mr-4" color="black" size="25"/>
+                  <IoIosNotifications className="mr-4" style={{transform:'rotate(35deg)'}} color="black" size="25"/>
                   <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
                     <FaUserCircle color="blue" size="25"/><FiChevronDown color="black"/></div>
                   <div style={{display:'flex',flexDirection:'column',alignItems:'center'}} className="ml-2">
-                    <p style={{fontSize:'14px'}} className="mb-0 text-primary">See radio administrator</p>
-                    <p style={{fontSize:'14px'}} className="mb-0 text-dark">sr@sr.com</p>
+                    <p  style={{fontSize:'14px',color:'black',marginBottom:'0px'}} >COMPUTER CITY</p>
+                    <p style={{fontSize:'11px',marginLeft:'0px'}} className="mb-0 text-primary">{role}</p>
+                    <p style={{fontSize:'11px'}} className="mb-0 text-dark">{loginMail}</p>
                   </div>
                 </div>
               </DropdownToggle>
@@ -67,7 +70,7 @@ const activeStyle={backgroundColor:'#086890'}
                     <DropdownItem >
                   Change Password
                 </DropdownItem></NavLink>
-                <NavLink href="" style={{margin:'-5px'}}>
+                <NavLink href="/" style={{margin:'-5px'}}>
                     <DropdownItem >
                   Company Details
                 </DropdownItem></NavLink>
@@ -79,7 +82,7 @@ const activeStyle={backgroundColor:'#086890'}
                 </UncontrolledDropdown>
           </Navbar>
 
-        <Navbar style={{background:'#11A1DD',padding:'0px',marginBottom:'-35px'}} className="text-white" light expand="md">
+        <Navbar style={{background:'#11A1DD',padding:'0px'}} className="text-white" light expand="md">
         <NavbarToggler onClick={toggle}/>
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar>
@@ -97,7 +100,7 @@ const activeStyle={backgroundColor:'#086890'}
                     <DropdownItem>
                   Videos in Production
                 </DropdownItem></RouteNavLink>
-                <RouteNavLink activeStyle={activeStyle} to="capmpaignInMarket">
+                <RouteNavLink activeStyle={activeStyle} to="/campaignInMarket">
                     <DropdownItem>
                   Campaign in market
                 </DropdownItem></RouteNavLink>

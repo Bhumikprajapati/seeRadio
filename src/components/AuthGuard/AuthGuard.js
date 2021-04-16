@@ -10,7 +10,7 @@ const token=localStorage.getItem('token')
           <Route   path= {props.path}
           render={()=>
               token? 
-             ( <props.component></props.component>)
+             ( <props.component/>)
               :(
                   alert('Someone Interrupted , Login first!!'),
               <Redirect   to={{pathname:'/login'}} /> )
