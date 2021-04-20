@@ -12,6 +12,8 @@ export const addCampaign=(campaign)=>network.postWithHeader('/api/campaign',camp
 export const addFile=(file)=>network.postWithToken('/api/campaign/upload',file);
 
 export const loginwith=(loginInfo)=>network.postWithPayload('/pub/login',loginInfo);
-export const changePassWith=(payload)=>network.postWithHeader('api/person/changePassword',payload)
+export const changePassWith=(payload)=>network.postWithHeader('/api/person/changePassword',payload)
 
 export const campaign=(id)=>network.getWithHeader(`/api/campaign/${id}`);
+
+export const getCampaignById=(payload)=>network.postWithHeader(`/api/campaign/getAllcampaigns`,payload);

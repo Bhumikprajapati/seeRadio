@@ -1,5 +1,5 @@
 import {React, useState} from 'react';
-import {Col,Form,FormGroup,Input,Label,Button, CardLink, FormFeedback} from 'reactstrap';
+import {Col,Form,FormGroup,Input,Label,Button, CardLink, FormFeedback,Spinner} from 'reactstrap';
 import './Login.css';
 import logo from '../../assets/logo.png';
 import {FaEyeSlash,FaEye} from 'react-icons/fa';
@@ -12,6 +12,7 @@ const Login=()=>{
      const [loginInfo,setLoginInfo]=useState({email:'',password:''})
      const [isFormValid,setisFormValid]=useState(false);
      const [toggle,setToggle]=useState(false);
+     const [loading,setLoading]=useState(false);
      const [validation,setValidation]=useState({
       email: {
         touched: false,
@@ -24,11 +25,13 @@ const Login=()=>{
     })
  
      const submitted=(e)=>{  
+       setLoading(true);
        e.preventDefault();
       
          loginwith(loginInfo)
          .then(res=>
           {
+            setLoading(false);
             console.log(res.personData);
             localStorage.setItem('token',res.token)
             localStorage.setItem('role',res.personData.roleCode)
@@ -40,7 +43,8 @@ const Login=()=>{
          
           })
          .catch(err=>
-          {
+          { 
+            setLoading(false);
             console.log(err);
       alert(JSON.parse(err.request.response).errorMessage)
           })
@@ -114,8 +118,22 @@ const Login=()=>{
                </div>
                </Col>
                <Col>
-               <Button  color='primary' block 
-                disabled={!isFormValid}  >LOGIN</Button>
+               {loading ?
+                    <Button variant="primary" >
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                        margin='2px'
+                      />
+                   Logging you in...
+                   </Button> 
+                   :
+                   <Button  color='primary' block 
+                   disabled={!isFormValid}  >LOGIN</Button>}
+             
                </Col> <br/>
                <CardLink  >Forgot password?</CardLink>
              </Form>

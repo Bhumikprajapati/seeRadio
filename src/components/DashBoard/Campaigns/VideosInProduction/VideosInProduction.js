@@ -6,23 +6,21 @@ import {Button} from 'reactstrap';
 import {FaFilter} from 'react-icons/fa';
 import './VideosInProduction.css';
 import { useEffect } from 'react/cjs/react.development';
-import axios from 'axios';
+// import axios from 'axios';
 import {useHistory} from 'react-router-dom';
+import { getCampaignById } from '../../../../ApiCalls/Api';
  const  VideosInProduction=()=> {  
 const [data,setAllData]=useState([])
-const url=process.env.REACT_APP_URL;
 const columns = useMemo(() => COLUMNS, [])
  useEffect(()=>{
-  const headers={
-    'x-token':localStorage.getItem('token')
-}
-axios.post(`${url}/api/campaign/getAllcampaigns`,{},{headers:headers})
+  
+getCampaignById({})
 .then(res=>{
-  console.log(res.data.data.rows)
-  setAllData(res.data.data.rows)
+  console.log(res.rows)
+  setAllData(res.rows)
 })
 .catch(err=>console.log(err))
- },[url])
+ },[])
 const {
   getTableProps,
   getTableBodyProps,
@@ -77,7 +75,6 @@ return (
           return (
             <tr {...row.getRowProps()}   >
               {row.cells.map(cell => {
-                console.log(cell)
                 return <td {...cell.getCellProps()}  onClick={()=>{history.push(`/campaignDetail/${cell.value}`)}} >{cell.render('Cell')}</td>
               })}
             </tr>

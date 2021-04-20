@@ -1,9 +1,10 @@
 import {React} from 'react';
-import {Col,Form,FormGroup,Input,Label,Button,FormText, FormFeedback} from 'reactstrap';
+import {Col,Form,FormGroup,Input,Label,Button,FormText, FormFeedback,Spinner} from 'reactstrap';
 import {FaEyeSlash,FaEye} from 'react-icons/fa';
 import { useEffect, useState } from 'react/cjs/react.development';
 import RegexValidation from '../Validations/RegexValidation';
 import { changePassWith } from '../../ApiCalls/Api';
+import { useHistory } from 'react-router';
 const Changepasword=(props)=>{
   const [pass,setPass]=useState({
     currentPass:'',
@@ -24,10 +25,12 @@ const Changepasword=(props)=>{
       valid:false
     }
   })
+  const history=useHistory();
   const [isFormValid,setisFormValid]=useState(false)
   const [currentPassToggle,setCurrentPassToggle]=useState(false)
   const [newPassToggle,setNewPassToggle]=useState(false)
   const [confirmNewToggle,setConfirmNewToggle]=useState(false)
+  const [loading,setLoading]=useState(false);
   let visibleForcurrentPass
   let visibleForNewPass
   let visibleForConfirmNewPass
@@ -46,6 +49,7 @@ setisFormValid(valid)
       setPass({...pass,[e.target.name]:e.target.value})
   }
   const handlePassSuccess=(e)=>{
+    setLoading(true);
     e.preventDefault()
     // if(pass['currentPass']===pass['newPass'])
     // {
@@ -61,11 +65,15 @@ setisFormValid(valid)
       "newPassword":pass['newPass']
     }
       changePassWith(payload)
-      .then(res=>{console.log(res)
+      .then(res=>{
+        console.log(res)
+        setLoading(false);
         alert('password changed successfully')
-        props.history.push('/dashBoard')
+        history.push('/dashBoard')
       })
-      .catch(err=>console.error('Error '+err))
+      .catch(err=>{
+        setLoading(false);
+        console.error('Error '+err)})
     
     }
   }
@@ -166,7 +174,20 @@ setisFormValid(valid)
               </FormGroup>           
               </Col>
                <Col>
-               <Button  color='primary' block  disabled={!isFormValid}>Change Password</Button>
+               {loading ?
+                    <Button variant="primary" >
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                        margin='2px'
+                      />
+                   Changing Password...
+                   </Button> 
+                   : <Button  color='primary' block  disabled={!isFormValid}>Change Password</Button>
+                   }
                </Col> 
              </Form>
              </div></div></div>

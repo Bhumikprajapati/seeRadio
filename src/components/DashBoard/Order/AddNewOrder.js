@@ -1,4 +1,4 @@
-import {Form,Row,Col,Label,Input,FormGroup,Alert,Button, FormFeedback} from 'reactstrap';
+import {Form,Row,Col,Label,Input,FormGroup,Alert,Button, FormFeedback,Spinner} from 'reactstrap';
 import {FaForward,FaBackward} from 'react-icons/fa';
 import { useState,useEffect, } from 'react/cjs/react.development';
 import RegexValidation from '../../Validations/RegexValidation';
@@ -10,6 +10,7 @@ const AddNewOrder=(props)=>{
      const [isFomValid, setisFormValid] = useState(false)
      const [advertiserOption,setAdvertiserOption]=useState([])
      const [targetMarketOption,setTargetMarketOption]=useState([])
+     const [loading,setLoading]=useState(false);
      const [validation,setValidation]=useState({
       advertiser:{
         touched:false,
@@ -79,6 +80,7 @@ const AddNewOrder=(props)=>{
     
     }
     const submitted=(e)=>{
+      setLoading(true);
       e.preventDefault()
       console.log(PageTwo)
       let advertiserIndex=advertiserOption.findIndex(i=>i.label===PageTwo['advertiser'])
@@ -106,10 +108,11 @@ const AddNewOrder=(props)=>{
     }
     //  addCampaign(campaign)
     //   .then(res=>{
+    //     setLoading(false);
     //     console.log(res)
     //     localStorage.setItem('OrderData',JSON.stringify(res))
     //     nextStep()})
-    //   .catch(err=>console.log(err))
+    //   .catch(err=>{ setLoading(false); console.log(err)})
       nextStep()
     }
     return(
@@ -207,10 +210,24 @@ const AddNewOrder=(props)=>{
         <Col md={4}>
         <Button color="black" style={{boxShadow: '0px 8px 15px rgba(0, 0, 0, 0.1)',margin:'10px'}}
          onClick={resetStep} >Cancle</Button>
-          <Button color="primary"  style={{boxShadow: '0px 8px 15px rgba(0, 0, 0, 0.1)',margin:'10px'}}
-          onClick={ submitted}
-          //  disabled={!isFomValid}
-          >Create Order  <FaForward/></Button>
+          {loading ?
+            <Button variant="primary" >
+              <Spinner
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+                margin='2px'
+              />
+           Creating Order...
+           </Button>
+           :  
+           <Button color="primary"  style={{boxShadow: '0px 8px 15px rgba(0, 0, 0, 0.1)',margin:'10px'}}
+           onClick={ submitted}
+           //  disabled={!isFomValid}
+           >Create Order  <FaForward/></Button> }
+         
         </Col>
 
     </Row>

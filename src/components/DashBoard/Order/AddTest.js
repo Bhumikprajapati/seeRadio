@@ -6,6 +6,7 @@ import { BsFillMicFill } from 'react-icons/bs'
 import CustomStepper from './Stepper/CustomStepper';
 import {  useState } from "react/cjs/react.development";
 import { addFile } from "../../../ApiCalls/Api";
+import { useHistory } from "react-router";
 const todayDate=()=>{
   var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -20,11 +21,7 @@ const AddTest = (props) => {
   const [scriptFlag,setScriptFlag]=useState(false)
   const [audioFlag,setAudioFlag]=useState(false)
   const [multiFileFlag,setMultiFileFlag]=useState(false)
-  // const [url,setUrl]=useState({
-  //   scriptUrl:'',
-  //   audioUrl:'',
-  //   multiUrl:[]
-  // })
+  const history=useHistory();
   const afterUpload=(type,file)=>{
     const OrderData=JSON.parse(localStorage.getItem('OrderData'))
     const campaignID=OrderData.history.campaignID
@@ -42,7 +39,6 @@ const AddTest = (props) => {
     else{
       formData.append("file",file);
     }
- 
     formData.append("campaignID",campaignID);
     formData.append("type",type);
     formData.append("uploadedBy",loginID);
@@ -351,7 +347,7 @@ setMultiFileFlag(true)
               <Button color="black" style={{ boxShadow: '0px 8px 15px rgba(0, 0, 0, 0.1)', margin: '10px' }}
               onClick={props.resetStep} >Cancle</Button>
               <Button color="primary" style={{ boxShadow: '0px 8px 15px rgba(0, 0, 0, 0.1)', margin: '10px' }}
-
+                onClick={()=>history.replace('/dashBoard')}
               >Done</Button>
             </Col>
           </Row>

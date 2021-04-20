@@ -2,7 +2,7 @@ import axios from 'axios';
 const BaseUrl=process.env.REACT_APP_URL;
 const token=localStorage.getItem('token')
 export const handleError=(err)=>{
- throw err.res.data
+ throw err
 }
 
 export const publicGet=(url)=>{
@@ -16,7 +16,9 @@ export const getWithHeader=(url)=>{
     {'x-token':token}})
     .then(res=>res.data.data)
     .catch(err=>handleError(err))
+  
 }
+console.log(token)
 export const post=(url,payload)=>{
     return axios.post(BaseUrl+url,payload)
     .then(res=>res.data.data)

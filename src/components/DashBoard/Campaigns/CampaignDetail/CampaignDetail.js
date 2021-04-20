@@ -8,12 +8,13 @@ import { useState } from 'react';
 import { useEffect } from 'react/cjs/react.development';
 import { useParams } from 'react-router-dom';
 import { campaign } from '../../../../ApiCalls/Api';
-
+import{ addFile} from '../../../../ApiCalls/Api';
 const CampaignDetail=()=>{
     const {id}=useParams()
 const [script,setScript]=useState([])
 const [audio, setAudio] = useState([])
 const [multifiles, setmultifiles] = useState([])
+
   const [campaignDetails,setCampaignDetails]=useState({
     advertiser: '',
     orderName: '',
@@ -27,7 +28,10 @@ const [multifiles, setmultifiles] = useState([])
     actionRequiredBy: '',
     scriptFileData:null,
     audioFileData:null,
-    multipleFileData:[]
+    multipleFileData:[],
+    campaignID:'',
+    clientPersonData:''
+
   })
 useEffect(()=> { document.body.style = 'background: #F2F5F9';
 campaign(id)
@@ -36,7 +40,6 @@ campaign(id)
         const scriptData=res.CampaignAssets.filter(file=>file.type==='SCRIPT')[0]
         const audioData=res.CampaignAssets.filter(file=>file.type==='AUDIO')[0]
         const multiData=res.CampaignAssets.filter(file=>file.type==='OTHER')
-        console.log(multiData)
         setCampaignDetails({
             advertiser: res.clientCompany.companyName,
             orderName: res.title,
@@ -50,22 +53,74 @@ campaign(id)
             actionRequiredBy: res.statusWithPerson.firstName + ' ' + res.statusWithPerson.lastName,
             scriptFileData:scriptData,
             audioFileData:audioData,
-            multipleFileData:multiData
+            multipleFileData:multiData,
+            campaignID:res.CampaignHistories[0].campaignID,
+            clientID:res.clientCompany.clientPersonID
         })
-
     }
 )
 .catch(err=>console.log(err))
 },[id])
+const afterUpload=(type,file)=>{
+  // const OrderData=JSON.parse(localStorage.getItem('OrderData'))
+  // const campaignID=OrderData.history.campaignID
+  const loginID=localStorage.getItem('loginId')
+  // const clientData=JSON.parse(localStorage.getItem('clientData'))
+  // const clientID=clientData.salesOrgCompany.clientPersonID
+
+  let formData=new FormData();
+  if(type==='OTHER')
+  {
+    for(const f of file)
+    {
+      formData.append("file",f)
+    }
+  }
+  else{
+    formData.append("file",file);
+  }
+
+  formData.append("campaignID",campaignDetails.campaignID);
+  formData.append("type",type);
+  formData.append("uploadedBy",loginID);
+  formData.append("clientID",campaignDetails.clientID)
+   addFile(formData)
+    .then(res=>{
+      console.log(res)
+    
+      if(res.data[0].type==='SCRIPT')
+      {
+        const script=res.data[0]
+        setScript(script)
+      }
+      if(res.data[0].type==='AUDIO')
+      {
+        const audio=res.data[0]
+        setAudio(audio)
+      }
+      if(res.data[0].type==='OTHER')
+      {
+        const data=res.data
+        // const multiUrl=[]
+        for(let index in data)
+        {
+          multifiles.push(data[index])
+        }
+      }
+
+    })
+    .catch(err=>console.error(err))
+}
+console.log(campaignDetails)
 var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 ]
 const onDropScript=(file)=>{
-    const fileName = file[0].name
-    console.log(file[0])    
-   let date=todayDate()
-    setScript([fileName,date])
-    // afterUpload('SCRIPT',file[0])
+    // const fileName = file[0].name
+  //   console.log(file[0])    
+  //  let date=todayDate()
+  //   setScript([fileName,date])
+    afterUpload('SCRIPT',file[0])
 }
 const todayDate=()=>{
     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -77,19 +132,19 @@ const todayDate=()=>{
     return date
   } 
 const onDropAudio = (file) => {
-    const fileName = file[0].name
-    let date=todayDate()
-    setAudio([fileName,date])
-    // afterUpload('AUDIO',file[0])
+    // const fileName = file[0].name
+    // let date=todayDate()
+    // setAudio([fileName,date])
+    afterUpload('AUDIO',file[0])
   }
   const onDropMultiFile = (file) => {
     const files = file
-    for(let i=0;i<files.length; i++) {
-      multifiles.push(files[i].name)
-      }
+    // for(let i=0;i<files.length; i++) {
+    //   multifiles.push(files[i].name)
+    //   }
       
-      console.log(files)
-    //   afterUpload('OTHER',files)
+    //   console.log(files)
+      afterUpload('OTHER',files)
   }
 const scriptFile=()=>{
     return document.getElementById('script').click()
@@ -101,24 +156,27 @@ const scriptFile=()=>{
     return document.getElementById('multi').click()
    }
 const uploadScriptHandler=(e)=>{
-setScript(e.target.files[0].name)
+  let file=e.target.files;
+// setScript(e.target.files[0].name)
+afterUpload('SCRIPT',file[0])
+
 }
 const uploadAudioHandler=(e)=>{
     let file=e.target.files
-    const fileName=file[0].name
-    let date=todayDate()
-    setAudio([fileName,date])
-    // afterUpload('AUDIO',file[0])
+    // const fileName=file[0].name
+    // let date=todayDate()
+    // setAudio([fileName,date])
+    afterUpload('AUDIO',file[0])
      }
      const uploadMultiFileHandler=(e)=>{
     let files=e.target.files
-    for(let i=0;i<files.length; i++) {
-    multifiles.push(files[i].name)
-    }
-    console.log(multifiles)
-    // afterUpload('OTHER',files)
+    // for(let i=0;i<files.length; i++) {
+    // multifiles.push(files[i].name)
+    // }
+    // console.log(multifiles)
+    afterUpload('OTHER',files)
      }
-let scriptFileData=(
+let scriptFileShowData=(
     <Row>
    <Col md={6}>
    <Card style={{ height: '100px', marginBottom: '20px' }}>
@@ -136,7 +194,6 @@ let scriptFileData=(
              {isDragReject && 'Select proper file type'}
              <br />
            </div>
-           {script}
          </section>
        )}
      </Dropzone>
@@ -154,7 +211,7 @@ let scriptFileData=(
  </Col>
  </Row>
   )
-  let audioFileData=(
+  let audioFile=(
     <Row>
     <Col md={6}>
       <Card style={{ height: '100px', marginBottom: '20px' }}>
@@ -172,7 +229,6 @@ let scriptFileData=(
                 {isDragReject && "Select only one file!"}
                 <br />
               </div>
-              {audio}
             </section>
           )}
         </Dropzone>
@@ -202,13 +258,13 @@ let scriptFileData=(
                   </thead>
                   <tbody>
                     {/* {sdate=new Date()} */}
-                  {/* { `${sdate.getDate()}-${monthNames[sdate.getMonth()]}-${sdate.getFullYear()}` }                 */}
+                  {/* { `${sdate.getDate()}-${monthNames[sdate.getMonth()]}-${sdate.getFullYear()}` }    */}
                   {campaignDetails.multipleFileData.map((i)=>{
                    return( <tr key={i.id}>
                       <td>{i.assetOrignalName }</td>
                       <td>{<strong>{i.uploadedByPerson.firstName+' '+i.uploadedByPerson.lastName}</strong>}</td>
-                      <td> {  i.updatedAt} </td>
-                      <td>download</td>
+                      <td> {todayDate()} </td>
+                      <td > <Button color='primary' onClick={()=>window.open(i.assetUrl,'_blank')} >Download</Button></td>
                     </tr>)
                   })}
                   </tbody>
@@ -219,8 +275,10 @@ let scriptFileData=(
       sdate=new Date(campaignDetails.scriptFileData.updatedAt)       
      }
      let vdate
-     if(campaignDetails.audioFileData!==null){
-      vdate=new Date(campaignDetails.audioFileData.updatedAt)       
+     if(campaignDetails.audioFileData)
+     {  
+     {vdate=new Date(campaignDetails.audioFileData.updatedAt)}
+
      }
     return(
         <div>
@@ -259,22 +317,22 @@ let scriptFileData=(
         <Row>
             <Col md={4} style={{background:'#b6e3db',marginRight:'10px'}}>Account Manager Assigned </Col>
             <Col md={4}  style={{background:'#b6e3db'}}>Distribution Partner Company Assigned</Col>
-            <Col md={4}> </Col>
+            {/* <Col md={4}> </Col> */}
         </Row>
         <Row  style={{marginBottom:'20px'}}> 
             <Col md={4} >Hiral Baraiya </Col>
             <Col md={4} >Not Yet Assigned</Col>
-            <Col md={4}> </Col>
+            {/* <Col md={4}> </Col> */}
         </Row>
         <Row>
             <Col md={4} style={{background:'#b6e3db',marginRight:'10px'}}>Sales Person Assigned </Col>
             <Col md={4}  style={{background:'#b6e3db'}}>Graphic Designer Assigned</Col>
-            <Col md={4}> </Col>
+            {/* <Col md={4}> </Col> */}
         </Row>
         <Row  style={{marginBottom:'27px'}}> 
             <Col md={4} >Hiral Baraiya </Col>
             <Col md={4} >Not Yet Assigned</Col>
-            <Col md={4}> </Col>
+            {/* <Col md={4}> </Col> */}
         </Row>
         <Row>Production Progress</Row>
         <hr/>
@@ -283,51 +341,60 @@ let scriptFileData=(
         <Alert color="info" style={{ textAlign: 'left' }} >
               Script File
                      </Alert>
-        { campaignDetails.scriptFileData!==null?
+        { campaignDetails.scriptFileData?
               <div style={{background:'#b5faac'}}>
               <Row>    
                <Col md={2}>
              <FaFileAlt style={{ color: '#007acc', fontSize: '50px', margin: '10px' }} />
              </Col> 
-             <Col md={2}>
+             <Col md={4}>
               <h5>File Name :</h5><br/>
+              {/* {console.log(campaignDetails.scriptFileData)} */}
             {campaignDetails.scriptFileData.assetOrignalName}
              </Col>
-             <Col md={4}>
+             <Col md={2}>
              <h5>File Upload by :</h5><br/>
              {campaignDetails.scriptFileData.uploadedByPerson.firstName + ' ' + campaignDetails.scriptFileData.uploadedByPerson.lastName}
              </Col>
-             <Col md={4}> 
+             <Col md={2}> 
              <h5>Upload Date:</h5><br/>   
              { `${sdate.getDate()}-${monthNames[sdate.getMonth()]}-${sdate.getFullYear()}` }                
              </Col>
+             <Col md={2}> 
+             <Button color='primary' style={{marginTop:'20px',marginRight:'5px'}} 
+             onClick={()=>window.open(campaignDetails.scriptFileData.assetUrl,'_blank')} > Download</Button><br/>   
+             </Col>
            </Row>
                 </div> 
-                :scriptFileData}
+                : scriptFileShowData}
          <Alert color="info" style={{ textAlign: 'left' ,marginTop:'10px'}} >
               Voice File
                      </Alert>
-            {campaignDetails.audioFileData!==null?
+            {campaignDetails.audioFileData ?
              <div style={{background:'#b5faac'}}>
              <Row>    
               <Col md={2}>
               <BsFillMicFill style={{ color: '#007acc', fontSize: '60px', margin: '10px' }} />
             </Col> 
-            <Col md={2}>
+            <Col md={4}>
              <h5>File Name :</h5><br/>
              {campaignDetails.audioFileData.assetOrignalName}
             </Col>
-            <Col md={4}>
+            <Col md={2}>
             <h5>File Upload by :</h5><br/>
             {campaignDetails.audioFileData.uploadedByPerson.firstName + ' ' + campaignDetails.audioFileData.uploadedByPerson.lastName}
             </Col>
-            <Col md={4}>
+            <Col md={2}>
             <h5>Upload Date:</h5><br/>
             { `${vdate.getDate()}-${monthNames[vdate.getMonth()]}-${vdate.getFullYear()}` }                
             </Col>
+            <Col md={2}>
+            <Button color='primary' style={{marginTop:'20px',marginRight:'5px'}} 
+             onClick={()=>window.open(campaignDetails.audioFileData.assetUrl,'_blank')} > Download</Button><br/> 
+             </Col>
           </Row>
                </div> 
-            :audioFileData}
+            :audioFile}
                <Alert color="info" style={{ textAlign: 'left',marginTop:'10px' }} >
               Advertiser Assets
                      </Alert>
@@ -362,7 +429,7 @@ let scriptFileData=(
                 </Row>
               </Col>
             </Row>
-            {campaignDetails.multipleFileData!==null?
+            {campaignDetails.multipleFileData?
             multiple
             :null}
             <Row  style={{marginTop:'10px'}} >Order</Row>
